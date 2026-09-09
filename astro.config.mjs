@@ -17,4 +17,12 @@ export default defineConfig({
     }),
     mdx(),
   ],
+  // A dev toolbar do Astro injeta o app de auditoria (aria-query /
+  // axobject-query) na página e quebra a hidratação das ilhas React em
+  // dev: os componentes chegam ao navegador mas não respondem a clique.
+  // Em produção nada disso é servido e tudo funciona. Como a toolbar não
+  // é usada aqui, desligá-la resolve sem custo.
+  devToolbar: {
+    enabled: false,
+  },
 });

@@ -19,3 +19,36 @@
     color: #04342C;
   }
 }
+
+@layer components {
+  /* Quem clica em "ver explicação completa" cai direto no trecho onde o
+     termo é explicado. Sem destaque, a pessoa aterrissa no meio de um
+     artigo longo sem pista de por que está ali — o realce responde
+     "é este parágrafo aqui". Fica aceso enquanto a âncora estiver ativa,
+     em vez de só piscar: um flash pode passar batido se a página demorar. */
+  .prose :target {
+    scroll-margin-top: 2rem;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem;
+    background-color: #E1F5EE;
+    animation: destaque-ancora 2.4s ease-out;
+  }
+
+  @keyframes destaque-ancora {
+    0%,
+    35% {
+      background-color: #9FE1CB;
+    }
+    100% {
+      background-color: #E1F5EE;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prose :target {
+      animation: none;
+    }
+  }
+}

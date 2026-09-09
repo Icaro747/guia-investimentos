@@ -16,9 +16,11 @@ npm run build   # gera o índice de busca (Pagefind só existe depois de um buil
 npm run dev      # servidor local em localhost:4321
 ```
 
-`npm run dev` sozinho, sem nunca ter rodado `npm run build`, mostra o campo de busca sem
-resultados — o índice do Pagefind é lido de `public/pagefind` ou `dist/pagefind`, gerado só no
-build. Rode `npm run build` uma vez após clonar o projeto e depois use `npm run dev` normalmente.
+`npm run dev` sozinho, sem nunca ter rodado `npm run build`, mostra o campo de busca com um
+aviso de índice ausente: o Pagefind indexa o HTML já compilado, então o índice só existe depois
+de um build. Rode `npm run build` uma vez após clonar o projeto e depois use `npm run dev`
+normalmente — o build copia o índice para `public/pagefind`
+(`scripts/copiar-indice-busca.mjs`), que é de onde o dev server o serve.
 
 ## Estrutura
 
@@ -27,7 +29,9 @@ src/content/artigos/     → um arquivo .md ou .mdx por artigo/regra
 src/content/glossario/   → um arquivo .md por termo/sigla
 src/components/Termo.astro + TermoClient.tsx  → o tooltip clicável de glossário
 src/components/SearchBar.tsx                  → busca (Pagefind)
+src/components/Dado.astro                     → carimba um número com a data em que foi conferido
 scripts/gerar-changelog.mjs                   → gera src/data/changelog.json do git log
+scripts/copiar-indice-busca.mjs               → copia dist/pagefind para public/, para a busca rodar em dev
 src/pages/                                    → rotas do site
 ```
 

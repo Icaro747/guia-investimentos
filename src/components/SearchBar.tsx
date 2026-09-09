@@ -12,11 +12,16 @@ interface Props {
   variante?: 'padrao' | 'destaque';
 }
 
-// Pagefind só existe em /pagefind/pagefind.js DEPOIS de `npm run build`
-// (o índice é gerado a partir do HTML já compilado). Em `astro dev` puro,
-// sem um build anterior, a busca mostra o aviso abaixo em vez de quebrar.
-// Fluxo recomendado no README: rode `npm run build` uma vez, depois
-// `npm run dev` normalmente — o índice fica em public/pagefind.
+// O índice do Pagefind é gerado a partir do HTML já compilado, então só
+// existe depois de `npm run build`, e é servido como arquivo estático em
+// /pagefind/pagefind.js.
+//
+// Ele não pode ser carregado com import() direto: o Vite recusa
+// transformar qualquer arquivo de /public importado do código-fonte
+// ("should not be imported from source code"), e em dev isso devolve 500.
+// A saída é injetar um <script type="module">, cujo import quem resolve é
+// o navegador, fora do pipeline do Vite. Um HEAD antes distingue "índice
+// ainda não gerado" de "falhou ao carregar", para o aviso ser útil.
 export default function SearchBar({ variante = 'padrao' }: Props) {
   const [query, setQuery] = useState('');
   const [resultados, setResultados] = useState<Resultado[]>([]);
@@ -25,19 +30,34 @@ export default function SearchBar({ variante = 'padrao' }: Props) {
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
-    // Caminho montado em variável (não como string literal) de propósito:
-    // com um literal, o Rollup tenta resolver o módulo em build time e
-    // falha, porque /pagefind/pagefind.js só existe depois do build, no
-    // site publicado. Com uma variável, o bundler não analisa o caminho
-    // estaticamente e o import só roda de fato no navegador, em runtime.
-    const caminhoPagefind = ['', 'pagefind', 'pagefind.js'].join('/');
-    import(/* @vite-ignore */ caminhoPagefind)
-      .then((mod) => {
-        pagefindRef.current = mod;
-      })
-      .catch(() => {
-        setStatus('indisponivel');
-      });
+    let cancelado = false;
+    const url = `${window.location.origin}/pagefind/pagefind.js`;
+
+    const aoFicarPronto = (e: Event) => {
+      if (!cancelado) pagefindRef.current = (e as CustomEvent).detail;
+    };
+    window.addEventListener('pagefind:pronto', aoFicarPronto, { once: true });
+
+    (async () => {
+      try {
+        const resposta = await fetch(url, { method: 'HEAD' });
+        if (!resposta.ok) throw new Error('índice ausente');
+      } catch {
+        if (!cancelado) setStatus('indisponivel');
+        return;
+      }
+      if (cancelado) return;
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.textContent = `import * as pagefind from '${url}';` +
+        `window.dispatchEvent(new CustomEvent('pagefind:pronto', { detail: pagefind }));`;
+      document.head.appendChild(script);
+    })();
+
+    return () => {
+      cancelado = true;
+      window.removeEventListener('pagefind:pronto', aoFicarPronto);
+    };
   }, []);
 
   useEffect(() => {

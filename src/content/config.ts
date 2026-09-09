@@ -39,6 +39,10 @@ const glossario = defineCollection({
     sigla: z.string(),
     definicaoCurta: z.string().max(240),
     artigoRelacionado: reference('artigos').optional(),
+    // Heading dentro do artigo onde o termo é de fato explicado, sem o #.
+    // Sem isso o "ver explicação completa" larga a pessoa no topo de um
+    // artigo longo, sem dizer onde olhar.
+    ancora: z.string().optional(),
   }),
 });
 

@@ -1,3 +1,5 @@
+import typography from '@tailwindcss/typography';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,ts,tsx,md,mdx}'],
@@ -52,7 +54,47 @@ export default {
       maxWidth: {
         prose: '42rem',
       },
+      // O corpo dos artigos é markdown, então o estilo dele vem daqui e
+      // não de classes no MDX. Amarrado aos mesmos tokens do resto do
+      // site para o artigo não parecer de outro projeto.
+      typography: ({ theme }) => ({
+        DEFAULT: {
+          css: {
+            '--tw-prose-body': theme('colors.ink.secondary'),
+            '--tw-prose-headings': theme('colors.ink.primary'),
+            '--tw-prose-bold': theme('colors.ink.primary'),
+            '--tw-prose-links': theme('colors.teal.600'),
+            '--tw-prose-counters': theme('colors.ink.muted'),
+            '--tw-prose-bullets': theme('colors.teal.100'),
+            '--tw-prose-hr': theme('colors.base.border'),
+            '--tw-prose-quotes': theme('colors.ink.primary'),
+            '--tw-prose-quote-borders': theme('colors.teal.200'),
+            '--tw-prose-captions': theme('colors.ink.muted'),
+            '--tw-prose-th-borders': theme('colors.base.border'),
+            '--tw-prose-td-borders': theme('colors.base.border'),
+            maxWidth: 'none',
+            // Citação em bloco: usada nos artigos para destacar a regra
+            // principal, então precisa ler como destaque e não como aspas.
+            blockquote: {
+              fontStyle: 'normal',
+              fontWeight: '500',
+              backgroundColor: theme('colors.teal.50'),
+              borderRadius: theme('borderRadius.lg'),
+              paddingTop: theme('spacing.3'),
+              paddingBottom: theme('spacing.3'),
+              paddingRight: theme('spacing.4'),
+            },
+            'blockquote p:first-of-type::before': { content: 'none' },
+            'blockquote p:last-of-type::after': { content: 'none' },
+            // Tabelas comparativas aparecem em quase todo artigo.
+            table: { fontSize: theme('fontSize.sm')[0] },
+            thead: { borderBottomColor: theme('colors.base.border') },
+            'thead th': { color: theme('colors.ink.primary') },
+            'tbody td, tbody th': { paddingTop: theme('spacing.2.5'), paddingBottom: theme('spacing.2.5') },
+          },
+        },
+      }),
     },
   },
-  plugins: [],
+  plugins: [typography],
 };

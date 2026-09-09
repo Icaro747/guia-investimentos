@@ -15,8 +15,9 @@ if (!entry) {
   );
 }
 
+const ancora = entry.data.ancora ? `#${entry.data.ancora}` : '';
 const artigoHref = entry.data.artigoRelacionado
-  ? `/artigos/${entry.data.artigoRelacionado.slug}`
+  ? `/artigos/${entry.data.artigoRelacionado.slug}${ancora}`
   : undefined;
 ---
 
