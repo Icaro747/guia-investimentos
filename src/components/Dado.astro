@@ -1,0 +1,45 @@
+---
+// Carimba um número que envelhece sozinho (limite do FGC, taxa, alíquota)
+// com a data em que ele foi conferido. A convenção está em .doc/conteudo.md:
+// o site não promete manter tudo atualizado — promete dizer de quando é
+// cada dado, para quem lê saber o que precisa reconferir.
+//
+// A data cobre envelhecimento, não erro de origem: confira o número uma vez,
+// ao escrever, e depois a data assume.
+interface Props {
+  /** Data ISO em que o dado foi conferido na fonte. */
+  em: string;
+  /** Onde foi conferido — vira link se for URL. */
+  fonte?: string;
+}
+
+const { em, fonte } = Astro.props;
+
+const [ano, mes, dia] = em.split('-');
+const dataLegivel = `${dia}/${mes}/${ano}`;
+const ehUrl = fonte?.startsWith('http');
+---
+
+<span class="whitespace-nowrap">
+  <slot />
+  {
+    ehUrl ? (
+      <a
+        href={fonte}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="ml-1 align-super text-[0.65em] text-ink-muted underline decoration-dotted hover:text-teal-600"
+        title={`Conferido em ${dataLegivel} · ${fonte}`}
+      >
+        {dataLegivel}
+      </a>
+    ) : (
+      <span
+        class="ml-1 align-super text-[0.65em] text-ink-muted"
+        title={fonte ? `Conferido em ${dataLegivel} · ${fonte}` : `Conferido em ${dataLegivel}`}
+      >
+        {dataLegivel}
+      </span>
+    )
+  }
+</span>

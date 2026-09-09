@@ -17,9 +17,11 @@ const artigos = defineCollection({
       // de um pote (como usar o site, regras gerais). Manter em sincronia
       // com PoteId em src/lib/potes.ts.
       pote: z.enum(['oportunidade', 'equilibrio', 'rentabilidade']).optional(),
-      // Posição na trilha do pote, para quem está montando e lê na ordem.
-      // Sem `ordem`, o artigo é material de consulta avulsa (ficha de
-      // produto, aprofundamento) e aparece fora da trilha.
+      // Em que parte do pote o artigo entra: a trilha de quem está
+      // montando, a ficha de um produto, ou o aprofundamento.
+      secao: z.enum(['trilha', 'ficha', 'aprofundamento']).optional(),
+      // Posição dentro da `secao`. Ordena os produtos na ordem em que se
+      // compra, não por ordem alfabética de slug.
       ordem: z.number().optional(),
       // Curadoria manual de "veja também" — slugs de outros artigos.
       relacionados: z.array(reference('artigos')).default([]),

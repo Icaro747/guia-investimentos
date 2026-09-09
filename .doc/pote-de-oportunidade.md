@@ -1,7 +1,8 @@
 # Pote de Oportunidade — conteúdo extraído
 
 Fonte: treinamento "Construindo o alicerce do seu império — Pote de Oportunidade", Marcelo Moreta.
-Status: transcrição processada, **ainda não virou artigo**. Ver "Pendências" no fim.
+Status: **escrito e publicado** — 14 artigos em `src/content/artigos/` e 29 termos de glossário.
+Este arquivo continua sendo a fonte de onde o conteúdo saiu.
 
 ## Disclaimer da própria fonte
 
@@ -230,26 +231,24 @@ assessor decidir por você.
 - [ ] **Resolver a divergência dos potes**: são 3 (como nesta fonte) ou 4 com o "Pote de
       Proteção"? Se são 4, de onde vem o quarto?
 
-### Números que precisam de data de referência
+### Números conferidos — resolvido
 
-Decisão tomada: esses dados entram com a **data em que foram obtidos**, explícita ao lado do
-número (ver "Convenção: dados com data de referência" em `conteudo.md`). Não vira obrigação de
-manter atualizado — se o dado envelhecer, a data mostra até quando ele valia.
+Conferidos na fonte oficial em 09/09/2026 e publicados com `<Dado em="..." fonte="...">`.
 
-- [ ] **Índice de Basileia — 11%.** Este é o único que precisa de uma conferida antes de
-      carimbar, porque parece ser número legado: 11% foi o mínimo brasileiro por anos, até a
-      transição de Basileia III trocar a estrutura por uma exigência base mais adicionais de
-      capital. Carimbar 11% com a data de hoje afirmaria que isso vale hoje. Uma consulta ao
-      Banco Central resolve — e depois a data assume.
-- [ ] **FGC — R$ 250 mil por CPF por instituição.** Carimbar com a data. A transcrição não
-      menciona o teto global por período; vale incluir se for confirmado na mesma consulta.
-- [ ] **Taxa de custódia do Tesouro — 0,20% a.a.** Carimbar com a data.
-
-### Outras
-
-- [ ] Decidir se os exemplos de bancos nominados entram no site. Recomendação: **não** — são
-      dados de 2022/2023, envelhecem, e nomear banco se aproxima de recomendação. Ensinar a ler
-      os indicadores, sem citar instituição.
+- [x] **Índice de Basileia.** A suspeita se confirmou: **11% era o mínimo brasileiro antes de
+      Basileia III**. Hoje o requerimento é de 8% mais o Adicional de Capital Principal
+      (conservação, contracíclico, sistêmico), o que põe o piso efetivo acima de 10%. O artigo
+      publicado separa as duas coisas: o mínimo regulatório é 8% + ACP, e os 11% da fonte
+      original valem como **corte pessoal conservador**, não como exigência legal.
+- [x] **FGC.** R$ 250 mil por CPF por instituição confirmado — e o teto global que a
+      transcrição não mencionava existe: **R$ 1 milhão a cada quatro anos**, somando todas as
+      instituições. Incluído no artigo do CDB.
+- [x] **Taxa de custódia do Tesouro.** 0,20% ao ano confirmado, e apareceu uma isenção que a
+      transcrição não menciona: **Tesouro Selic é isento até R$ 10 mil de estoque**. Como a
+      fatia por produto no exemplo é de R$ 7.680, na prática o custo de custódia é zero para
+      quem está montando o pote. Incluído no artigo do Tesouro Selic.
+- [x] Bancos nominados **não** entraram no site, conforme recomendado. O artigo ensina a ler
+      Basileia, imobilização e histórico de lucro sem citar instituição.
 - [ ] Marcar como `acao-recorrente` o que exige iniciativa própria: **repor o pote depois de
       usar** e **reavaliar a saúde do emissor na renovação do título**.
 

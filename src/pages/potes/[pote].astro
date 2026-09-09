@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Badge from '../../components/Badge.astro';
 import { POTES } from '../../lib/potes';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
   return POTES.map((pote) => ({ params: { pote: pote.id }, props: { pote } }));
@@ -12,15 +12,23 @@ const { pote } = Astro.props;
 
 const doPote = (await getCollection('artigos')).filter((a) => a.data.pote === pote.id);
 
-// Três grupos, por como a pessoa chega ao conteúdo: quem está montando o
-// pote lê a trilha na ordem; quem já montou volta só na ficha que precisa;
-// e as ações recorrentes ficam separadas porque exigem iniciativa própria.
+// Quatro grupos, por como a pessoa chega ao conteúdo: quem está montando o
+// pote lê a trilha na ordem; quem já montou volta na ficha do produto que
+// precisa; o aprofundamento é opcional; e as ações recorrentes ficam
+// separadas porque exigem iniciativa própria.
 const acoes = doPote.filter((a) => a.data.tipo === 'acao-recorrente');
 const informativos = doPote.filter((a) => a.data.tipo !== 'acao-recorrente');
-const trilha = informativos
-  .filter((a) => a.data.ordem !== undefined)
-  .sort((a, b) => a.data.ordem! - b.data.ordem!);
-const consulta = informativos.filter((a) => a.data.ordem === undefined);
+
+// Fichas de produto saem na ordem em que se compra, não alfabética.
+const porSecao = (secao: string) =>
+  informativos
+    .filter((a) => a.data.secao === secao)
+    .sort((a, b) => (a.data.ordem ?? 0) - (b.data.ordem ?? 0));
+
+const trilha = porSecao('trilha');
+const fichas = porSecao('ficha');
+const aprofundamento = porSecao('aprofundamento');
+const semSecao = informativos.filter((a) => !a.data.secao);
 
 const variantePorNivel = {
   iniciante: 'teal',
@@ -95,14 +103,74 @@ const rotuloNivel = {
   }
 
   {
-    consulta.length > 0 && (
+    fichas.length > 0 && (
       <section class="mt-12">
-        <h2 class="font-serif text-2xl text-ink-primary">Para consultar quando precisar</h2>
+        <h2 class="font-serif text-2xl text-ink-primary">Os produtos</h2>
         <p class="mt-2 max-w-prose text-ink-secondary">
-          Fichas de produto e aprofundamento — não precisa ler na ordem.
+          Na ordem em que se compra. Cada ficha tem a mesma estrutura, para dar para comparar.
         </p>
         <ul class="mt-6 grid gap-3 sm:grid-cols-2">
-          {consulta.map((a) => (
+          {fichas.map((a) => (
+            <li>
+              <a
+                href={`/artigos/${a.slug}`}
+                class="block h-full rounded-xl border border-base-border bg-white p-4 transition hover:border-teal-200"
+              >
+                <span class="flex flex-wrap items-center gap-2">
+                  <span class="font-medium text-ink-primary">{a.data.title}</span>
+                  <Badge
+                    label={rotuloNivel[a.data.nivel]}
+                    variant={variantePorNivel[a.data.nivel]}
+                  />
+                </span>
+                <span class="mt-1 block text-sm text-ink-secondary">{a.data.descricao}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    aprofundamento.length > 0 && (
+      <section class="mt-12">
+        <h2 class="font-serif text-2xl text-ink-primary">Para ir mais fundo</h2>
+        <p class="mt-2 max-w-prose text-ink-secondary">
+          Não precisa ler para montar o pote — ajuda a escolher melhor dentro dele.
+        </p>
+        <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+          {aprofundamento.map((a) => (
+            <li>
+              <a
+                href={`/artigos/${a.slug}`}
+                class="block h-full rounded-xl border border-base-border bg-white p-4 transition hover:border-teal-200"
+              >
+                <span class="flex flex-wrap items-center gap-2">
+                  <span class="font-medium text-ink-primary">{a.data.title}</span>
+                  <Badge
+                    label={rotuloNivel[a.data.nivel]}
+                    variant={variantePorNivel[a.data.nivel]}
+                  />
+                </span>
+                <span class="mt-1 block text-sm text-ink-secondary">{a.data.descricao}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    semSecao.length > 0 && (
+      <section class="mt-12">
+        <h2 class="font-serif text-2xl text-ink-primary">Outros artigos deste pote</h2>
+        <p class="mt-2 max-w-prose text-ink-secondary">
+          Ainda sem seção definida.
+        </p>
+        <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+          {semSecao.map((a) => (
             <li>
               <a
                 href={`/artigos/${a.slug}`}
