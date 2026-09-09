@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Badge from '../components/Badge.astro';
+import changelog from '../data/changelog.json';
+
+interface Entrada {
+  data: string;
+  categoria: 'adicionado' | 'corrigido' | 'alterado';
+  escopo?: string;
+  mensagem: string;
+}
+
+const entradas = (changelog as Entrada[]).sort((a, b) => (a.data < b.data ? 1 : -1));
+
+const estilos: Record<Entrada['categoria'], { label: string; variant: 'teal' | 'coral' | 'amber' }> = {
+  adicionado: { label: 'Adicionado', variant: 'teal' },
+  corrigido: { label: 'Corrigido', variant: 'coral' },
+  alterado: { label: 'Alterado', variant: 'amber' },
+};
+---
+
+<BaseLayout title="Atualizações" descricao="O que foi adicionado, corrigido ou alterado no conteúdo do site, gerado a partir do histórico do repositório.">
+  <h1 class="font-serif text-3xl text-ink-primary">Atualizações</h1>
+  <p class="mt-2 max-w-prose text-ink-secondary">
+    Gerado automaticamente a partir dos commits que alteram conteúdo. Use prefixos de
+    <code>feat:</code>, <code>fix:</code> etc. nas mensagens de commit para categorizar
+    corretamente — veja <code>scripts/gerar-changelog.mjs</code>.
+  </p>
+
+  {
+    entradas.length === 0 ? (
+      <p class="mt-8 rounded-lg border border-base-border bg-white p-4 text-sm text-ink-secondary">
+        Nenhuma atualização ainda. Este arquivo é gerado por <code>npm run changelog</code>
+        a partir do histórico do git — ele fica vazio até o repositório ter commits que
+        alterem <code>src/content</code>.
+      </p>
+    ) : (
+      <ul class="mt-8 space-y-4">
+        {entradas.map((e) => (
+          <li class="rounded-xl border border-base-border bg-white p-4">
+            <div class="flex items-center justify-between gap-2">
+              <Badge label={estilos[e.categoria].label} variant={estilos[e.categoria].variant} />
+              <span class="text-xs text-ink-muted">
+                {new Date(e.data).toLocaleDateString('pt-BR')}
+              </span>
+            </div>
+            <p class="mt-2 text-sm text-ink-primary">
+              {e.escopo && <span class="font-medium">{e.escopo}: </span>}
+              {e.mensagem}
+            </p>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>

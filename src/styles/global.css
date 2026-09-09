@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background-color: #FAFAF8;
+    color: #1C1917;
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  h1, h2, h3 {
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 500;
+  }
+  ::selection {
+    background-color: #9FE1CB;
+    color: #04342C;
+  }
+}

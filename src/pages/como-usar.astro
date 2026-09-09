@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Como usar" descricao="Como a busca, os níveis e os termos clicáveis funcionam neste site.">
+  <h1 class="font-serif text-3xl text-ink-primary">Como usar este site</h1>
+
+  <section class="mt-8 max-w-prose space-y-4 text-ink-secondary">
+    <p>
+      <strong class="font-medium text-ink-primary">Busca:</strong> digite qualquer palavra no
+      campo no topo da página — nome de um ativo, uma sigla ou o tema que você lembra. Erros de
+      digitação e acentos não atrapalham a busca.
+    </p>
+    <p>
+      <strong class="font-medium text-ink-primary">Níveis:</strong> cada artigo tem um selo de
+      iniciante, intermediário ou avançado. Não é preciso ler em ordem — comece pelo nível em que
+      você já se sente confortável.
+    </p>
+    <p>
+      <strong class="font-medium text-ink-primary">Termos sublinhados:</strong> qualquer palavra
+      com sublinhado pontilhado é clicável. Ela abre uma explicação curta ali mesmo, com um link
+      para a página completa sobre o assunto.
+    </p>
+    <p>
+      <strong class="font-medium text-ink-primary">Ações que você precisa lembrar:</strong> alguns
+      artigos são marcados como "ação recorrente" — coisas que não acontecem automaticamente,
+      como declarar imposto sobre a venda de um FII. Eles aparecem em destaque na página inicial.
+    </p>
+  </section>
+
+  <section class="mt-12">
+    <h2 class="text-lg font-medium text-ink-primary">Perguntas sobre o site</h2>
+    <dl class="mt-4 space-y-5">
+      <div>
+        <dt class="font-medium text-ink-primary">Não encontrei o que eu procurava na busca.</dt>
+        <dd class="mt-1 text-sm text-ink-secondary">
+          Tente um termo mais curto ou mais genérico. Se o assunto realmente não estiver aqui
+          ainda, ele pode estar apenas fora do site — avise o grupo para adicionarmos.
+        </dd>
+      </div>
+      <div>
+        <dt class="font-medium text-ink-primary">Os artigos precisam ser lidos em ordem?</dt>
+        <dd class="mt-1 text-sm text-ink-secondary">
+          Não. Os níveis são só uma sugestão de ponto de partida — navegue como quiser.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-12">
+    <h2 class="text-lg font-medium text-ink-primary">Perguntas sobre o conteúdo</h2>
+    <p class="mt-1 text-sm text-ink-secondary">
+      Exemplos — substitua pelas perguntas mais comuns do grupo, cada uma linkando para o artigo
+      correspondente.
+    </p>
+    <dl class="mt-4 space-y-5">
+      <div>
+        <dt class="font-medium text-ink-primary">Preciso declarar algo todo mês por ter FII?</dt>
+        <dd class="mt-1 text-sm text-ink-secondary">
+          Não pelo rendimento mensal (isento) — mas sim sempre que você <strong>vender</strong>
+          cotas com lucro. Veja <a href="/artigos/declaracao-ir-venda-fii" class="text-teal-600 hover:text-teal-800">o passo a passo</a>.
+        </dd>
+      </div>
+    </dl>
+  </section>
+</BaseLayout>

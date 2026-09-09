@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.env
+.DS_Store
+
+# Índice do Pagefind, gerado no build
+public/pagefind/
+
+# Configuração local do Claude Code (permissões da máquina)
+.claude/settings.local.json
+
+# Gerado por scripts/gerar-changelog.mjs antes de todo dev/build
+src/data/changelog.json

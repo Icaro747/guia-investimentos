@@ -1,0 +1,28 @@
+---
+import { getEntry } from 'astro:content';
+import TermoClient from './TermoClient';
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+const entry = await getEntry('glossario', id);
+
+if (!entry) {
+  throw new Error(
+    `<Termo id="${id}" /> não encontrado em src/content/glossario/. Crie o arquivo ${id}.md lá.`
+  );
+}
+
+const artigoHref = entry.data.artigoRelacionado
+  ? `/artigos/${entry.data.artigoRelacionado.slug}`
+  : undefined;
+---
+
+<TermoClient
+  client:visible
+  sigla={entry.data.sigla}
+  definicaoCurta={entry.data.definicaoCurta}
+  artigoHref={artigoHref}
+/>

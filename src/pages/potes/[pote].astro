@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Badge from '../../components/Badge.astro';
+import { POTES } from '../../lib/potes';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  return POTES.map((pote) => ({ params: { pote: pote.id }, props: { pote } }));
+}
+
+const { pote } = Astro.props;
+
+const doPote = (await getCollection('artigos')).filter((a) => a.data.pote === pote.id);
+
+// Três grupos, por como a pessoa chega ao conteúdo: quem está montando o
+// pote lê a trilha na ordem; quem já montou volta só na ficha que precisa;
+// e as ações recorrentes ficam separadas porque exigem iniciativa própria.
+const acoes = doPote.filter((a) => a.data.tipo === 'acao-recorrente');
+const informativos = doPote.filter((a) => a.data.tipo !== 'acao-recorrente');
+const trilha = informativos
+  .filter((a) => a.data.ordem !== undefined)
+  .sort((a, b) => a.data.ordem! - b.data.ordem!);
+const consulta = informativos.filter((a) => a.data.ordem === undefined);
+
+const variantePorNivel = {
+  iniciante: 'teal',
+  intermediario: 'amber',
+  avancado: 'coral',
+} as const;
+
+const rotuloNivel = {
+  iniciante: 'Iniciante',
+  intermediario: 'Intermediário',
+  avancado: 'Avançado',
+} as const;
+---
+
+<BaseLayout title={pote.nome} descricao={pote.resumo}>
+  <p class="text-sm text-ink-muted">
+    <a href="/" class="hover:text-teal-600">Início</a> · Potes
+  </p>
+
+  <section class="mt-3 max-w-prose">
+    <h1 class="font-serif text-3xl leading-tight text-ink-primary md:text-4xl">
+      {pote.nome}
+    </h1>
+    <p class="mt-2 font-medium text-teal-600">{pote.contem}</p>
+    <p class="mt-4 text-lg leading-relaxed text-ink-secondary">{pote.resumo}</p>
+  </section>
+
+  {
+    doPote.length === 0 && (
+      <p class="mt-10 rounded-xl border border-base-border bg-base-surface p-5 text-ink-secondary">
+        O conteúdo deste pote ainda não foi escrito. Enquanto isso, use a busca ou veja os
+        <a href="/artigos" class="text-teal-600 hover:text-teal-800">
+          {' '}
+          outros artigos
+        </a>
+        .
+      </p>
+    )
+  }
+
+  {
+    trilha.length > 0 && (
+      <section class="mt-12">
+        <h2 class="font-serif text-2xl text-ink-primary">Para montar o pote</h2>
+        <p class="mt-2 max-w-prose text-ink-secondary">
+          Na ordem. Cada passo depende do anterior.
+        </p>
+        <ol class="mt-6 space-y-3">
+          {trilha.map((a, i) => (
+            <li>
+              <a
+                href={`/artigos/${a.slug}`}
+                class="flex gap-4 rounded-xl border border-base-border bg-white p-4 transition hover:border-teal-200"
+              >
+                <span class="font-serif text-xl text-teal-400">{i + 1}</span>
+                <span class="min-w-0">
+                  <span class="flex flex-wrap items-center gap-2">
+                    <span class="font-medium text-ink-primary">{a.data.title}</span>
+                    <Badge
+                      label={rotuloNivel[a.data.nivel]}
+                      variant={variantePorNivel[a.data.nivel]}
+                    />
+                  </span>
+                  <span class="mt-1 block text-sm text-ink-secondary">{a.data.descricao}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
+
+  {
+    consulta.length > 0 && (
+      <section class="mt-12">
+        <h2 class="font-serif text-2xl text-ink-primary">Para consultar quando precisar</h2>
+        <p class="mt-2 max-w-prose text-ink-secondary">
+          Fichas de produto e aprofundamento — não precisa ler na ordem.
+        </p>
+        <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+          {consulta.map((a) => (
+            <li>
+              <a
+                href={`/artigos/${a.slug}`}
+                class="block h-full rounded-xl border border-base-border bg-white p-4 transition hover:border-teal-200"
+              >
+                <span class="flex flex-wrap items-center gap-2">
+                  <span class="font-medium text-ink-primary">{a.data.title}</span>
+                  <Badge
+                    label={rotuloNivel[a.data.nivel]}
+                    variant={variantePorNivel[a.data.nivel]}
+                  />
+                </span>
+                <span class="mt-1 block text-sm text-ink-secondary">{a.data.descricao}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    acoes.length > 0 && (
+      <section class="mt-12">
+        <h2 class="font-serif text-2xl text-ink-primary">Ações que você precisa lembrar</h2>
+        <p class="mt-2 max-w-prose text-ink-secondary">
+          Deste pote — não acontecem automaticamente.
+        </p>
+        <ul class="mt-6 space-y-3">
+          {acoes.map((a) => (
+            <li>
+              <a
+                href={`/artigos/${a.slug}`}
+                class="block rounded-xl border border-amber-100 bg-amber-50 p-4 transition hover:border-amber-200"
+              >
+                <p class="font-medium text-amber-800">{a.data.title}</p>
+                <p class="mt-1 text-sm text-amber-800/80">{a.data.descricao}</p>
+                {a.data.prazo && (
+                  <p class="mt-2 text-xs font-medium text-amber-800">Prazo: {a.data.prazo}</p>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</BaseLayout>

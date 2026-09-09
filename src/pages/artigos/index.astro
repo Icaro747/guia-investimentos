@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Badge from '../../components/Badge.astro';
+import { POTES } from '../../lib/potes';
+import { getCollection } from 'astro:content';
+
+const artigos = await getCollection('artigos');
+
+// Agrupado por pote, com os sem pote no fim — a lista completa só faz
+// sentido se preservar a mesma organização do resto do site.
+const grupos = [
+  ...POTES.map((pote) => ({
+    titulo: pote.nome,
+    href: `/potes/${pote.id}`,
+    itens: artigos.filter((a) => a.data.pote === pote.id),
+  })),
+  {
+    titulo: 'Sem pote',
+    href: null,
+    itens: artigos.filter((a) => !a.data.pote),
+  },
+].filter((g) => g.itens.length > 0);
+
+const variantePorNivel = {
+  iniciante: 'teal',
+  intermediario: 'amber',
+  avancado: 'coral',
+} as const;
+
+const rotuloNivel = {
+  iniciante: 'Iniciante',
+  intermediario: 'Intermediário',
+  avancado: 'Avançado',
+} as const;
+---
+
+<BaseLayout title="Todos os artigos">
+  <p class="text-sm text-ink-muted">
+    <a href="/" class="hover:text-teal-600">Início</a> · Artigos
+  </p>
+
+  <section class="mt-3 max-w-prose">
+    <h1 class="font-serif text-3xl leading-tight text-ink-primary md:text-4xl">
+      Todos os artigos
+    </h1>
+    <p class="mt-4 text-ink-secondary">
+      A lista completa, agrupada por pote. Para navegar pelo caminho de construção, comece
+      pela <a href="/" class="text-teal-600 hover:text-teal-800">página inicial</a>.
+    </p>
+  </section>
+
+  {
+    grupos.map((grupo) => (
+      <section class="mt-10">
+        <h2 class="font-serif text-xl text-ink-primary">
+          {grupo.href ? (
+            <a href={grupo.href} class="hover:text-teal-600">
+              {grupo.titulo}
+            </a>
+          ) : (
+            grupo.titulo
+          )}
+        </h2>
+        <ul class="mt-4 space-y-3">
+          {grupo.itens.map((a) => (
+            <li>
+              <a
+                href={`/artigos/${a.slug}`}
+                class="block rounded-xl border border-base-border bg-white p-4 transition hover:border-teal-200"
+              >
+                <span class="flex flex-wrap items-center gap-2">
+                  <span class="font-medium text-ink-primary">{a.data.title}</span>
+                  <Badge
+                    label={rotuloNivel[a.data.nivel]}
+                    variant={variantePorNivel[a.data.nivel]}
+                  />
+                  {a.data.tipo === 'acao-recorrente' && (
+                    <Badge label="Ação recorrente" variant="amber" />
+                  )}
+                </span>
+                <span class="mt-1 block text-sm text-ink-secondary">{a.data.descricao}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</BaseLayout>

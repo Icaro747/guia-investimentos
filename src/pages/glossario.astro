@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const termos = (await getCollection('glossario')).sort((a, b) =>
+  a.data.sigla.localeCompare(b.data.sigla)
+);
+---
+
+<BaseLayout title="Glossário" descricao="Todos os termos e siglas explicados em uma lista, sem precisar buscar.">
+  <h1 class="font-serif text-3xl text-ink-primary">Glossário</h1>
+  <p class="mt-2 text-ink-secondary">
+    Os mesmos termos que aparecem clicáveis dentro dos artigos, reunidos aqui para quem prefere navegar em vez de buscar.
+  </p>
+
+  <dl class="mt-8 divide-y divide-base-border">
+    {
+      termos.map((t) => (
+        <div class="py-5">
+          <dt class="font-medium text-ink-primary">{t.data.sigla}</dt>
+          <dd class="mt-1 text-sm text-ink-secondary">{t.data.definicaoCurta}</dd>
+          {t.data.artigoRelacionado && (
+            <dd class="mt-2">
+              <a
+                href={`/artigos/${t.data.artigoRelacionado.slug}`}
+                class="text-sm font-medium text-teal-600 hover:text-teal-800"
+              >
+                Ver explicação completa
+              </a>
+            </dd>
+          )}
+        </div>
+      ))
+    }
+  </dl>
+</BaseLayout>

@@ -1,0 +1,64 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Badge from '../../components/Badge.astro';
+
+export async function getStaticPaths() {
+  const artigos = await getCollection('artigos');
+  return artigos.map((a) => ({ params: { slug: a.slug }, props: { entry: a } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const relacionados = await Promise.all(
+  entry.data.relacionados.map((ref) => getEntry(ref))
+);
+
+const nivelVariant =
+  entry.data.nivel === 'iniciante' ? 'teal' : entry.data.nivel === 'intermediario' ? 'amber' : 'coral';
+---
+
+<BaseLayout title={entry.data.title} descricao={entry.data.descricao}>
+  <article class="max-w-prose" data-pagefind-filter={`nivel:${entry.data.nivel}, tipo:${entry.data.tipo}`}>
+    <div class="flex flex-wrap items-center gap-2">
+      <Badge label={entry.data.nivel} variant={nivelVariant} />
+      <Badge label={entry.data.tipo === 'acao-recorrente' ? 'ação recorrente' : 'informativo'} variant="neutral" />
+    </div>
+
+    <h1 class="mt-3 font-serif text-3xl text-ink-primary">{entry.data.title}</h1>
+
+    {
+      entry.data.prazo && (
+        <p class="mt-4 rounded-lg bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+          Prazo: {entry.data.prazo}
+        </p>
+      )
+    }
+
+    <div class="prose prose-p:text-ink-secondary prose-headings:font-serif prose-headings:text-ink-primary prose-a:text-teal-600 mt-8 max-w-none">
+      <Content />
+    </div>
+
+    {
+      relacionados.length > 0 && (
+        <div class="mt-10 border-t border-base-border pt-6">
+          <h2 class="text-sm font-medium text-ink-primary">Veja também</h2>
+          <ul class="mt-3 space-y-2">
+            {relacionados.map((r) => r && (
+              <li>
+                <a href={`/artigos/${r.slug}`} class="text-sm text-teal-600 hover:text-teal-800">
+                  {r.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    <p class="mt-8 text-xs text-ink-muted">
+      Última revisão: {entry.data.dataAtualizacao.toLocaleDateString('pt-BR')}
+    </p>
+  </article>
+</BaseLayout>

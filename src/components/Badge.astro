@@ -1,0 +1,19 @@
+---
+interface Props {
+  label: string;
+  variant?: 'teal' | 'amber' | 'coral' | 'neutral';
+}
+
+const { label, variant = 'neutral' } = Astro.props;
+
+const styles: Record<string, string> = {
+  teal: 'bg-teal-50 text-teal-800',
+  amber: 'bg-amber-50 text-amber-800',
+  coral: 'bg-coral-50 text-coral-800',
+  neutral: 'bg-base-surface text-ink-secondary',
+};
+---
+
+<span class={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[variant]}`}>
+  {label}
+</span>
